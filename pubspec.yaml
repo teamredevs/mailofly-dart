@@ -2,10 +2,10 @@ name: mailofly
 description: >-
   Official Dart client for the Mailofly REST API (one-off compose, contacts,
   templates, campaigns, and more).
-version: 0.1.1
+version: 0.1.2
 homepage: https://docs.mailofly.com/sdks/dart
-repository: https://github.com/redevs/mailofly-dart
-issue_tracker: https://github.com/redevs/mailofly-dart/issues
+repository: https://github.com/teamredevs/mailofly-dart
+issue_tracker: https://github.com/teamredevs/mailofly-dart/issues
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

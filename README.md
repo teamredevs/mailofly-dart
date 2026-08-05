@@ -4,7 +4,7 @@
 
 Official **Dart / Flutter** client for the [Mailofly REST API](https://docs.mailofly.com/api).
 
-> **Source of truth:** developed in the [mailofly monorepo](https://github.com/redevs/mailofly) under `packages/dart`. This public repo is mirrored automatically on change.
+> **Source of truth:** developed in the [mailofly monorepo](https://github.com/godstark82/mailofly) under `packages/dart`. This public repo is mirrored automatically on change.
 
 ## Requirements
 
@@ -94,7 +94,7 @@ final client = Mailofly(
 ## Releasing
 
 1. Bump `version` in `pubspec.yaml` (and `CHANGELOG.md`) in the **monorepo** PR.
-2. Merge to `main`/`master` → GitHub Action syncs this folder to `redevs/mailofly-dart`.
+2. Merge to `main`/`master` → GitHub Action syncs this folder to `teamredevs/mailofly-dart`.
 3. Publish workflow runs and publishes to pub.dev only when the version is new.
 
 ## License

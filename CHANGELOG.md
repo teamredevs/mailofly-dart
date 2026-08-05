@@ -1,3 +1,8 @@
+## 0.1.2
+
+- Point `repository` / `issue_tracker` at [teamredevs/mailofly-dart](https://github.com/teamredevs/mailofly-dart).
+- Docs and homepage links use docs.mailofly.com.
+
 ## 0.1.1
 
 - `MailoflyCompose.send` now uses named parameters (`accountKey`, `subject`, `body`, `to`, `toList`, `contactIds`, `cc`, `bcc`, `variables`, `templateId`) instead of a raw map. Use `sendRaw` for the previous escape hatch.
