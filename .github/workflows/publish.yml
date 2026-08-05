@@ -1,0 +1,80 @@
+# Publishes to pub.dev when pubspec version is new.
+#
+# Secret (mailofly-dart repo): PUB_CREDENTIALS
+#   From a machine logged into pub.dev:
+#     cat ~/.pub-cache/credentials.json
+#   Store the full JSON as the secret value.
+
+name: Publish
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: publish-pub
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish to pub.dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Get dependencies
+        run: dart pub get
+
+      - name: Analyze
+        run: dart analyze --fatal-infos
+
+      - name: Test
+        run: dart test
+
+      - name: Check if version already published
+        id: version
+        run: |
+          set -euo pipefail
+          NAME="$(awk '/^name:/{print $2; exit}' pubspec.yaml)"
+          VERSION="$(awk '/^version:/{print $2; exit}' pubspec.yaml)"
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if ! curl -fsSL "https://pub.dev/api/packages/${NAME}" -o /tmp/pkg.json; then
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "Package not on pub.dev yet — will publish $VERSION."
+            exit 0
+          fi
+          if jq -e --arg v "$VERSION" '.versions[] | select(.version == $v)' /tmp/pkg.json > /dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Version $VERSION already on pub.dev — skipping publish."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "Version $VERSION is new — will publish."
+          fi
+
+      - name: Setup pub credentials
+        if: steps.version.outputs.exists == 'false'
+        env:
+          PUB_CREDENTIALS: ${{ secrets.PUB_CREDENTIALS }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PUB_CREDENTIALS:-}" ]; then
+            echo "::error::PUB_CREDENTIALS secret is not set."
+            exit 1
+          fi
+          mkdir -p "$HOME/.config/dart"
+          # Dart 3 uses ~/.config/dart/pub-credentials.json on Linux
+          printf '%s' "$PUB_CREDENTIALS" > "$HOME/.config/dart/pub-credentials.json"
+          mkdir -p "$HOME/.pub-cache"
+          cp "$HOME/.config/dart/pub-credentials.json" "$HOME/.pub-cache/credentials.json" 2>/dev/null || true
+
+      - name: Publish
+        if: steps.version.outputs.exists == 'false'
+        run: dart pub publish --force
