@@ -43,6 +43,7 @@ class MailoflyTransport {
     final uri = _uri(path, query);
     final headers = <String, String>{
       'Accept': 'application/json',
+      'X-Mailofly-Client': 'sdk/dart',
     };
     if (withAuth) {
       if (apiKey.isEmpty) {
