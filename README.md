@@ -35,16 +35,11 @@ Future<void> main() async {
     final accounts = await client.accounts.list();
     print(accounts['data']);
 
-    await client.compose.send(
-      accountKey: 'acc_…',
-      subject: 'Hi {{first_name}}',
-      body: '<p>Thanks for signing up.</p>',
+    await client.emails.send(
+      from: 'Acme <onboarding@example.com>',
       to: 'you@example.com',
-      // or: toList: ['a@b.com', 'c@d.com'],
-      // or: contactIds: ['uuid-…'],
-      cc: ['cc@example.com'],
-      bcc: ['bcc@example.com'],
-      variables: {'first_name': 'Alex'},
+      subject: 'Hello',
+      html: '<p>Thanks for signing up.</p>',
     );
   } on MailoflyException catch (e) {
     print('${e.statusCode} ${e.error} ${e.message}');
@@ -70,7 +65,7 @@ print(meta['resources']);
 | Templates | `client.templates.list()`, … |
 | Segments | `client.segments.list()`, … plus `client.segments.contacts(id).list/add/remove` |
 | Campaigns | `client.campaigns.list()`, …, `runs`, `send` |
-| Compose | `client.compose.send(accountKey: …, subject: …, body: …, to: …)` or `sendRaw` |
+| Emails | `client.emails.send(from: …, to: …, subject: …, html: …)` or `sendRaw` |
 | Mail logs | `client.mailLogs.list(page: 1, pageSize: 20, status: 'sent')` |
 
 Request/response JSON matches [`/api/v1`](https://docs.mailofly.com/api).

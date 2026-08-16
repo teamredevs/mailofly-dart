@@ -2,6 +2,6 @@
 library;
 
 export 'src/client.dart';
-export 'src/compose.dart' show buildComposeRequestBody;
+export 'src/compose.dart' show buildComposeRequestBody, buildEmailsRequestBody;
 export 'src/exception.dart';
 export 'src/transport.dart' show kDefaultBaseUrl, normalizeBaseUrl;

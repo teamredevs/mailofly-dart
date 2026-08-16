@@ -63,6 +63,8 @@ class Mailofly {
 
   MailoflyCompose get compose => MailoflyCompose(_transport);
 
+  MailoflyEmails get emails => MailoflyEmails(_transport);
+
   MailoflyMailLogs get mailLogs => MailoflyMailLogs(_transport);
 
   void close() => _transport.close();
@@ -210,6 +212,48 @@ class MailoflyCampaigns {
       );
 }
 
+class MailoflyEmails {
+  MailoflyEmails(this._t);
+  final MailoflyTransport _t;
+
+  /// Sends transactional email via [POST /api/v1/emails](https://www.mailofly.com/docs/api/emails).
+  Future<Map<String, dynamic>> send({
+    String? accountKey,
+    required String from,
+    required Object to,
+    required String subject,
+    String? html,
+    String? text,
+    Object? cc,
+    Object? bcc,
+    Object? replyTo,
+    Object? headers,
+    List<Map<String, String>>? tags,
+    List<Map<String, dynamic>>? attachments,
+    Map<String, dynamic>? template,
+  }) async {
+    final payload = <String, dynamic>{
+      'from': from.trim(),
+      'subject': subject,
+      'to': to,
+      if (accountKey != null && accountKey.trim().isNotEmpty) 'account_key': accountKey.trim(),
+      if (html != null && html.trim().isNotEmpty) 'html': html.trim(),
+      if (text != null && text.trim().isNotEmpty) 'text': text.trim(),
+      if (cc != null) 'cc': cc,
+      if (bcc != null) 'bcc': bcc,
+      if (replyTo != null) 'reply_to': replyTo,
+      if (headers != null) 'headers': headers,
+      if (tags != null) 'tags': tags,
+      if (attachments != null) 'attachments': attachments,
+      if (template != null) 'template': template,
+    };
+    return _asMap(await _t.request('POST', 'emails', body: payload));
+  }
+
+  Future<Map<String, dynamic>> sendRaw(Map<String, dynamic> body) async =>
+      _asMap(await _t.request('POST', 'emails', body: body));
+}
+
 class MailoflyCompose {
   MailoflyCompose(this._t);
   final MailoflyTransport _t;
@@ -253,12 +297,12 @@ class MailoflyCompose {
       contactIds: contactIds,
       variables: variables,
     );
-    return _asMap(await _t.request('POST', 'compose', body: payload));
+    return _asMap(await _t.request('POST', 'emails', body: payload));
   }
 
   /// Same as [send] but accepts a raw JSON map (escape hatch; matches the REST body exactly).
   Future<Map<String, dynamic>> sendRaw(Map<String, dynamic> body) async =>
-      _asMap(await _t.request('POST', 'compose', body: body));
+      _asMap(await _t.request('POST', 'emails', body: body));
 }
 
 class MailoflyMailLogs {
