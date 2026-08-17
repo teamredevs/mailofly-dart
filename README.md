@@ -66,6 +66,7 @@ print(meta['resources']);
 | Segments | `client.segments.list()`, … plus `client.segments.contacts(id).list/add/remove` |
 | Campaigns | `client.campaigns.list()`, …, `runs`, `send` |
 | Emails | `client.emails.send(from: …, to: …, subject: …, html: …)` or `sendRaw` |
+| Batch | `client.batch.send([…])` |
 | Mail logs | `client.mailLogs.list(page: 1, pageSize: 20, status: 'sent')` |
 
 Request/response JSON matches [`/api/v1`](https://docs.mailofly.com/api).

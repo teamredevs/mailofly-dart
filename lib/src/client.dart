@@ -65,6 +65,8 @@ class Mailofly {
 
   MailoflyEmails get emails => MailoflyEmails(_transport);
 
+  MailoflyBatch get batch => MailoflyBatch(_transport);
+
   MailoflyMailLogs get mailLogs => MailoflyMailLogs(_transport);
 
   void close() => _transport.close();
@@ -252,6 +254,30 @@ class MailoflyEmails {
 
   Future<Map<String, dynamic>> sendRaw(Map<String, dynamic> body) async =>
       _asMap(await _t.request('POST', 'emails', body: body));
+
+  Future<Map<String, dynamic>> get(String id) async =>
+      _asMap(await _t.request('GET', 'emails/${Uri.encodeComponent(id)}'));
+
+  Future<Map<String, dynamic>> list({
+    int? limit,
+    String? after,
+    String? before,
+  }) async {
+    final query = <String, String>{};
+    if (limit != null) query['limit'] = '$limit';
+    if (after != null && after.isNotEmpty) query['after'] = after;
+    if (before != null && before.isNotEmpty) query['before'] = before;
+    return _asMap(await _t.request('GET', 'emails', query: query.isEmpty ? null : query));
+  }
+}
+
+class MailoflyBatch {
+  MailoflyBatch(this._t);
+  final MailoflyTransport _t;
+
+  /// Sends up to 100 emails via [POST /api/v1/emails/batch](https://www.mailofly.com/docs/api/emails).
+  Future<Map<String, dynamic>> send(List<Map<String, dynamic>> emails) async =>
+      _asMap(await _t.request('POST', 'emails/batch', body: emails));
 }
 
 class MailoflyCompose {
