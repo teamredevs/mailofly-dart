@@ -71,15 +71,6 @@ print(meta['resources']);
 
 Request/response JSON matches [`/api/v1`](https://docs.mailofly.com/api).
 
-### Custom base URL & HTTP client
-
-```dart
-final client = Mailofly(
-  apiKey: 'mf_live_…',
-  baseUrl: 'https://www.mailofly.com',
-  httpClient: myClient, // optional; default closes when you call client.close()
-);
-```
 
 ## Docs
 

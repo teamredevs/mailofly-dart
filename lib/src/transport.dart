@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 import 'exception.dart';
 
-const String kDefaultBaseUrl = 'https://www.mailofly.com';
+const String kDefaultBaseUrl = 'https://api.mailofly.com';
 
 String normalizeBaseUrl(String url) => url.replaceAll(RegExp(r'/+$'), '');
 
