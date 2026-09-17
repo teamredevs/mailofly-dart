@@ -14,7 +14,7 @@ Official **Dart / Flutter** client for the [Mailofly REST API](https://docs.mail
 
 ```yaml
 dependencies:
-  mailofly: ^0.1.1
+  mailofly: ^0.2.0
 ```
 
 ```bash
@@ -32,8 +32,8 @@ Future<void> main() async {
   final client = Mailofly(apiKey: 'mf_live_…');
 
   try {
-    final accounts = await client.accounts.list();
-    print(accounts['data']);
+    final identities = await client.identities.list();
+    print(identities['data']);
 
     await client.emails.send(
       from: 'Acme <onboarding@example.com>',
@@ -60,13 +60,15 @@ print(meta['resources']);
 
 | API | Dart |
 |-----|------|
-| Accounts | `client.accounts.list()`, `create`, `get`, `update`, `delete` |
+| Identities | `client.identities.list()`, `get`, `update`, `delete` |
+| Accounts | *(deprecated alias for `client.identities`)* |
 | Contacts | `client.contacts.list(segmentId: …)`, `create`, `get`, `update`, `delete` |
 | Templates | `client.templates.list()`, … |
 | Segments | `client.segments.list()`, … plus `client.segments.contacts(id).list/add/remove` |
 | Campaigns | `client.campaigns.list()`, …, `runs`, `send` |
-| Emails | `client.emails.send(from: …, to: …, subject: …, html: …)` or `sendRaw` |
+| Emails | `client.emails.send()`, `sendRaw`, `get`, `list`, `update`, `cancel` |
 | Batch | `client.batch.send([…])` |
+| Compose | `client.compose.send(…)` *(deprecated — use `emails`)* |
 | Mail logs | `client.mailLogs.list(page: 1, pageSize: 20, status: 'sent')` |
 
 Request/response JSON matches [`/api/v1`](https://docs.mailofly.com/api).

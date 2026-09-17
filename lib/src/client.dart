@@ -51,6 +51,10 @@ class Mailofly {
     }
   }
 
+  MailoflyIdentities get identities => MailoflyIdentities(_transport);
+
+  /// @deprecated Use [identities] instead.
+  @Deprecated('Use identities instead')
   MailoflyAccounts get accounts => MailoflyAccounts(_transport);
 
   MailoflyContacts get contacts => MailoflyContacts(_transport);
@@ -72,23 +76,41 @@ class Mailofly {
   void close() => _transport.close();
 }
 
+class MailoflyIdentities {
+  MailoflyIdentities(this._t);
+  final MailoflyTransport _t;
+
+  Future<Map<String, dynamic>> list() async => _asMap(await _t.request('GET', 'identities'));
+
+  Future<Map<String, dynamic>> get(String id) async =>
+      _asMap(await _t.request('GET', 'identities/${Uri.encodeComponent(id)}'));
+
+  Future<Map<String, dynamic>> update(String id, Map<String, dynamic> body) async =>
+      _asMap(await _t.request('PATCH', 'identities/${Uri.encodeComponent(id)}', body: body));
+
+  Future<Map<String, dynamic>> delete(String id) async =>
+      _asMap(await _t.request('DELETE', 'identities/${Uri.encodeComponent(id)}'));
+}
+
+/// @deprecated Use [MailoflyIdentities] instead.
+@Deprecated('Use MailoflyIdentities instead')
 class MailoflyAccounts {
   MailoflyAccounts(this._t);
   final MailoflyTransport _t;
 
-  Future<Map<String, dynamic>> list() async => _asMap(await _t.request('GET', 'accounts'));
+  Future<Map<String, dynamic>> list() async => _asMap(await _t.request('GET', 'identities'));
 
   Future<Map<String, dynamic>> create(Map<String, dynamic> body) async =>
-      _asMap(await _t.request('POST', 'accounts', body: body));
+      _asMap(await _t.request('POST', 'identities', body: body));
 
   Future<Map<String, dynamic>> get(String id) async =>
-      _asMap(await _t.request('GET', 'accounts/${Uri.encodeComponent(id)}'));
+      _asMap(await _t.request('GET', 'identities/${Uri.encodeComponent(id)}'));
 
   Future<Map<String, dynamic>> update(String id, Map<String, dynamic> body) async =>
-      _asMap(await _t.request('PATCH', 'accounts/${Uri.encodeComponent(id)}', body: body));
+      _asMap(await _t.request('PATCH', 'identities/${Uri.encodeComponent(id)}', body: body));
 
   Future<Map<String, dynamic>> delete(String id) async =>
-      _asMap(await _t.request('DELETE', 'accounts/${Uri.encodeComponent(id)}'));
+      _asMap(await _t.request('DELETE', 'identities/${Uri.encodeComponent(id)}'));
 }
 
 class MailoflyContacts {
@@ -218,7 +240,7 @@ class MailoflyEmails {
   MailoflyEmails(this._t);
   final MailoflyTransport _t;
 
-  /// Sends transactional email via [POST /api/v1/emails](https://www.mailofly.com/docs/api/emails).
+  /// Sends transactional email via [POST /api/v1/emails](https://docs.mailofly.com/api/emails/send-email).
   Future<Map<String, dynamic>> send({
     String? accountKey,
     required String from,
@@ -233,6 +255,7 @@ class MailoflyEmails {
     List<Map<String, String>>? tags,
     List<Map<String, dynamic>>? attachments,
     Map<String, dynamic>? template,
+    String? scheduledAt,
   }) async {
     final payload = <String, dynamic>{
       'from': from.trim(),
@@ -248,6 +271,7 @@ class MailoflyEmails {
       if (tags != null) 'tags': tags,
       if (attachments != null) 'attachments': attachments,
       if (template != null) 'template': template,
+      if (scheduledAt != null && scheduledAt.trim().isNotEmpty) 'scheduled_at': scheduledAt.trim(),
     };
     return _asMap(await _t.request('POST', 'emails', body: payload));
   }
@@ -257,6 +281,23 @@ class MailoflyEmails {
 
   Future<Map<String, dynamic>> get(String id) async =>
       _asMap(await _t.request('GET', 'emails/${Uri.encodeComponent(id)}'));
+
+  Future<Map<String, dynamic>> update(
+    String id, {
+    String? scheduledAt,
+    Map<String, dynamic>? body,
+  }) async {
+    final payload = body != null ? Map<String, dynamic>.from(body) : <String, dynamic>{};
+    if (scheduledAt != null && scheduledAt.trim().isNotEmpty) {
+      payload['scheduled_at'] = scheduledAt.trim();
+    }
+    return _asMap(
+      await _t.request('PATCH', 'emails/${Uri.encodeComponent(id)}', body: payload),
+    );
+  }
+
+  Future<Map<String, dynamic>> cancel(String id) async =>
+      _asMap(await _t.request('POST', 'emails/${Uri.encodeComponent(id)}/cancel'));
 
   Future<Map<String, dynamic>> list({
     int? limit,
@@ -275,7 +316,7 @@ class MailoflyBatch {
   MailoflyBatch(this._t);
   final MailoflyTransport _t;
 
-  /// Sends up to 100 emails via [POST /api/v1/emails/batch](https://www.mailofly.com/docs/api/emails).
+  /// Sends up to 100 emails via [POST /api/v1/emails/batch](https://docs.mailofly.com/api/emails/send-batch-emails).
   Future<Map<String, dynamic>> send(List<Map<String, dynamic>> emails) async =>
       _asMap(await _t.request('POST', 'emails/batch', body: emails));
 }
@@ -284,7 +325,8 @@ class MailoflyCompose {
   MailoflyCompose(this._t);
   final MailoflyTransport _t;
 
-  /// Sends one-off email via [POST /api/v1/compose](https://www.mailofly.com/docs/api/compose).
+  /// Sends one-off email via [POST /api/v1/emails](https://docs.mailofly.com/api/emails/send-email).
+  /// @deprecated Use [MailoflyEmails.send] instead.
   ///
   /// **Content** — pick one:
   /// - [templateId]: UUID of a saved template; do not pass [subject] / [body].

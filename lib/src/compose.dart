@@ -76,10 +76,14 @@ Map<String, dynamic> buildComposeRequestBody({
     emails.add(s);
   }
   if (toList != null) {
-    for (final e in toList) addEmail(e);
+    for (final e in toList) {
+      addEmail(e);
+    }
   }
   if (to != null && to.trim().isNotEmpty) {
-    for (final e in to.split(RegExp(r'[\s,;]+'))) addEmail(e);
+    for (final e in to.split(RegExp(r'[\s,;]+'))) {
+      addEmail(e);
+    }
   }
   if (emails.isEmpty) {
     throw ArgumentError('Provide to or toList for recipients.');

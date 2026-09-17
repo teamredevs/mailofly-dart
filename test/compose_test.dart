@@ -2,6 +2,48 @@ import 'package:mailofly/mailofly.dart';
 import 'package:test/test.dart';
 
 void main() {
+  group('buildEmailsRequestBody', () {
+    test('standard email payload', () {
+      final m = buildEmailsRequestBody(
+        from: 'Acme <onboarding@example.com>',
+        to: ['user@example.com'],
+        subject: 'Welcome',
+        html: '<p>Hello world</p>',
+        accountKey: 'acc_123',
+        tags: [
+          {'name': 'category', 'value': 'welcome'},
+        ],
+      );
+
+      expect(m['from'], 'Acme <onboarding@example.com>');
+      expect(m['to'], ['user@example.com']);
+      expect(m['subject'], 'Welcome');
+      expect(m['html'], '<p>Hello world</p>');
+      expect(m['account_key'], 'acc_123');
+      expect(m['tags'], [
+        {'name': 'category', 'value': 'welcome'},
+      ]);
+    });
+
+    test('template payload', () {
+      final m = buildEmailsRequestBody(
+        from: 'Acme <onboarding@example.com>',
+        to: 'user@example.com',
+        template: {
+          'id': 'tpl_abc',
+          'variables': {'name': 'Alex'},
+        },
+      );
+
+      expect(m['from'], 'Acme <onboarding@example.com>');
+      expect(m['to'], 'user@example.com');
+      expect(m['template'], {
+        'id': 'tpl_abc',
+        'variables': {'name': 'Alex'},
+      });
+    });
+  });
+
   group('buildComposeRequestBody', () {
     test('inline + to', () {
       final m = buildComposeRequestBody(
@@ -12,20 +54,21 @@ void main() {
       );
       expect(m['account_key'], 'acc_x');
       expect(m['subject'], 'Hi');
-      expect(m['body'], '<p>x</p>');
-      expect(m['recipients'], {'emails': ['a@b.com']});
+      expect(m['html'], '<p>x</p>');
+      expect(m['to'], 'a@b.com');
     });
 
-    test('template + contactIds', () {
+    test('template + variables', () {
       final m = buildComposeRequestBody(
         accountKey: 'acc_x',
         templateId: 'tid',
-        contactIds: ['u1'],
+        to: 'a@b.com',
+        variables: {'first_name': 'Sam'},
       );
-      expect(m['template_id'], 'tid');
-      expect(m['recipients'], {
-        'type': 'contacts',
-        'contact_ids': ['u1'],
+      expect(m['account_key'], 'acc_x');
+      expect(m['template'], {
+        'id': 'tid',
+        'variables': {'first_name': 'Sam'},
       });
     });
 
@@ -40,6 +83,7 @@ void main() {
       );
       expect(m['cc'], ['c@c.com']);
       expect(m['bcc'], ['d@d.com']);
+      expect(m['to'], 'a@b.com');
     });
   });
 }

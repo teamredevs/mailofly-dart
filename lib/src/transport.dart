@@ -32,11 +32,11 @@ class MailoflyTransport {
     return u;
   }
 
-  /// [path] is relative to `/api/v1` (e.g. `accounts` or `accounts/uuid`). Use `''` for discovery.
+  /// [path] is relative to `/api/v1` (e.g. `identities` or `emails/batch`). Use `''` for discovery.
   Future<Object?> request(
     String method,
     String path, {
-    Map<String, dynamic>? body,
+    Object? body,
     Map<String, String>? query,
     bool withAuth = true,
   }) async {

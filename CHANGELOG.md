@@ -1,3 +1,13 @@
+## 0.2.0
+
+- Added `client.identities` (`list`, `get`, `update`, `delete`) matching current REST API v1.
+- Deprecated `client.accounts` in favor of `client.identities`.
+- Added `client.emails.update()` and `client.emails.cancel()` for scheduled emails.
+- Added optional `scheduledAt` support in `client.emails.send()`.
+- Fixed type mismatch in `client.batch.send` and transport allowing `List<Map<String, dynamic>>` payloads.
+- Enforced curly braces in control flow structures to conform with Dart style guidelines.
+- Updated documentation and API reference links to `docs.mailofly.com`.
+
 ## 0.1.2
 
 - Point `repository` / `issue_tracker` at [teamredevs/mailofly-dart](https://github.com/teamredevs/mailofly-dart).
