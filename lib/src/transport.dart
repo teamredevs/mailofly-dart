@@ -8,7 +8,7 @@ const String kDefaultBaseUrl = 'https://api.mailofly.com';
 
 String normalizeBaseUrl(String url) => url.replaceAll(RegExp(r'/+$'), '');
 
-/// Low-level HTTP for Mailofly `/api/v1`.
+/// Low-level HTTP for Mailofly API.
 class MailoflyTransport {
   MailoflyTransport({
     required this.baseUrl,
@@ -24,7 +24,7 @@ class MailoflyTransport {
 
   Uri _uri(String path, Map<String, String>? query) {
     final suffix = path.startsWith('/') ? path.substring(1) : path;
-    final absPath = suffix.isEmpty ? '/api/v1' : '/api/v1/$suffix';
+    final absPath = suffix.isEmpty ? '/' : '/$suffix';
     var u = Uri.parse(baseUrl).resolve(absPath);
     if (query != null && query.isNotEmpty) {
       u = u.replace(queryParameters: query);
@@ -32,7 +32,7 @@ class MailoflyTransport {
     return u;
   }
 
-  /// [path] is relative to `/api/v1` (e.g. `identities` or `emails/batch`). Use `''` for discovery.
+  /// [path] is relative to root (e.g. `identities` or `emails/batch`). Use `''` for discovery.
   Future<Object?> request(
     String method,
     String path, {

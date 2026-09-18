@@ -17,7 +17,7 @@ String _requireApiKey(String apiKey) {
   return k;
 }
 
-/// Dart client for Mailofly `/api/v1`.
+/// Dart client for Mailofly API.
 ///
 /// Call [close] when done if you rely on the default HTTP client, or pass your own [http.Client].
 class Mailofly {
@@ -33,7 +33,7 @@ class Mailofly {
 
   final MailoflyTransport _transport;
 
-  /// Unauthenticated `GET /api/v1` discovery document.
+  /// Unauthenticated `GET /` discovery document.
   static Future<Map<String, dynamic>> discovery({
     String? baseUrl,
     http.Client? httpClient,
@@ -240,7 +240,7 @@ class MailoflyEmails {
   MailoflyEmails(this._t);
   final MailoflyTransport _t;
 
-  /// Sends transactional email via [POST /api/v1/emails](https://docs.mailofly.com/api/emails/send-email).
+  /// Sends transactional email via [POST /emails](https://docs.mailofly.com/api/emails/send-email).
   Future<Map<String, dynamic>> send({
     String? accountKey,
     required String from,
@@ -316,7 +316,7 @@ class MailoflyBatch {
   MailoflyBatch(this._t);
   final MailoflyTransport _t;
 
-  /// Sends up to 100 emails via [POST /api/v1/emails/batch](https://docs.mailofly.com/api/emails/send-batch-emails).
+  /// Sends up to 100 emails via [POST /emails/batch](https://docs.mailofly.com/api/emails/send-batch-emails).
   Future<Map<String, dynamic>> send(List<Map<String, dynamic>> emails) async =>
       _asMap(await _t.request('POST', 'emails/batch', body: emails));
 }
@@ -325,7 +325,7 @@ class MailoflyCompose {
   MailoflyCompose(this._t);
   final MailoflyTransport _t;
 
-  /// Sends one-off email via [POST /api/v1/emails](https://docs.mailofly.com/api/emails/send-email).
+  /// Sends one-off email via [POST /emails](https://docs.mailofly.com/api/emails/send-email).
   /// @deprecated Use [MailoflyEmails.send] instead.
   ///
   /// **Content** — pick one:

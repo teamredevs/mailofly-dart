@@ -1,4 +1,4 @@
-/// Builds the JSON body for `POST /api/v1/emails` (Resend-compatible).
+/// Builds the JSON body for `POST /emails` (Resend-compatible).
 Map<String, dynamic> buildEmailsRequestBody({
   required String from,
   required Object to,
@@ -18,37 +18,25 @@ Map<String, dynamic> buildEmailsRequestBody({
   if (fromAddr.isEmpty) {
     throw ArgumentError.value(from, 'from', 'cannot be empty');
   }
-
-  final out = <String, dynamic>{
+  return {
     'from': fromAddr,
     'to': to,
+    if (subject != null) 'subject': subject,
+    if (html != null) 'html': html,
+    if (text != null) 'text': text,
+    if (accountKey != null && accountKey.trim().isNotEmpty) 'account_key': accountKey.trim(),
+    if (cc != null) 'cc': cc,
+    if (bcc != null) 'bcc': bcc,
+    if (replyTo != null) 'reply_to': replyTo,
+    if (headers != null) 'headers': headers,
+    if (tags != null) 'tags': tags,
+    if (attachments != null) 'attachments': attachments,
+    if (template != null) 'template': template,
   };
-
-  final key = accountKey?.trim();
-  if (key != null && key.isNotEmpty) out['account_key'] = key;
-
-  final sub = subject?.trim();
-  if (sub != null && sub.isNotEmpty) out['subject'] = sub;
-
-  final htmlBody = html?.trim();
-  if (htmlBody != null && htmlBody.isNotEmpty) out['html'] = htmlBody;
-
-  final textBody = text?.trim();
-  if (textBody != null && textBody.isNotEmpty) out['text'] = textBody;
-
-  if (template != null && template.isNotEmpty) out['template'] = template;
-  if (cc != null) out['cc'] = cc;
-  if (bcc != null) out['bcc'] = bcc;
-  if (replyTo != null) out['reply_to'] = replyTo;
-  if (headers != null && headers.isNotEmpty) out['headers'] = headers;
-  if (tags != null && tags.isNotEmpty) out['tags'] = tags;
-  if (attachments != null && attachments.isNotEmpty) out['attachments'] = attachments;
-
-  return out;
 }
 
 /// @deprecated Use [buildEmailsRequestBody] instead.
-@Deprecated('Use buildEmailsRequestBody for POST /api/v1/emails')
+@Deprecated('Use buildEmailsRequestBody for POST /emails')
 Map<String, dynamic> buildComposeRequestBody({
   required String accountKey,
   String? templateId,
@@ -62,7 +50,7 @@ Map<String, dynamic> buildComposeRequestBody({
   Map<String, String>? variables,
 }) {
   if (contactIds != null && contactIds.isNotEmpty) {
-    throw ArgumentError('contactIds are not supported on POST /v1/emails');
+    throw ArgumentError('contactIds are not supported on POST /emails');
   }
 
   final seen = <String>{};
