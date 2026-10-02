@@ -73,6 +73,10 @@ class Mailofly {
 
   MailoflyMailLogs get mailLogs => MailoflyMailLogs(_transport);
 
+  MailoflyAutomations get automations => MailoflyAutomations(_transport);
+
+  MailoflyEvents get events => MailoflyEvents(_transport);
+
   void close() => _transport.close();
 }
 
@@ -395,3 +399,88 @@ class MailoflyMailLogs {
     return _asMap(await _t.request('GET', 'mail-logs', query: q.isEmpty ? null : q));
   }
 }
+
+class MailoflyAutomationRuns {
+  MailoflyAutomationRuns(this._t);
+  final MailoflyTransport _t;
+
+  Future<Map<String, dynamic>> list(
+    String automationId, {
+    String? status,
+    int? limit,
+  }) async {
+    final q = <String, String>{};
+    if (status != null) q['status'] = status;
+    if (limit != null) q['limit'] = '$limit';
+    return _asMap(await _t.request(
+      'GET',
+      'automations/${Uri.encodeComponent(automationId)}/runs',
+      query: q.isEmpty ? null : q,
+    ));
+  }
+
+  Future<Map<String, dynamic>> get(String automationId, String runId) async =>
+      _asMap(await _t.request(
+        'GET',
+        'automations/${Uri.encodeComponent(automationId)}/runs/${Uri.encodeComponent(runId)}',
+      ));
+}
+
+class MailoflyAutomations {
+  MailoflyAutomations(this._t);
+  final MailoflyTransport _t;
+
+  MailoflyAutomationRuns get runs => MailoflyAutomationRuns(_t);
+
+  Future<Map<String, dynamic>> list({
+    String? status,
+    int? limit,
+  }) async {
+    final q = <String, String>{};
+    if (status != null) q['status'] = status;
+    if (limit != null) q['limit'] = '$limit';
+    return _asMap(await _t.request('GET', 'automations', query: q.isEmpty ? null : q));
+  }
+
+  Future<Map<String, dynamic>> create(Map<String, dynamic> body) async =>
+      _asMap(await _t.request('POST', 'automations', body: body));
+
+  Future<Map<String, dynamic>> get(String id) async =>
+      _asMap(await _t.request('GET', 'automations/${Uri.encodeComponent(id)}'));
+
+  Future<Map<String, dynamic>> update(String id, Map<String, dynamic> body) async =>
+      _asMap(await _t.request('PATCH', 'automations/${Uri.encodeComponent(id)}', body: body));
+
+  Future<Map<String, dynamic>> delete(String id) async =>
+      _asMap(await _t.request('DELETE', 'automations/${Uri.encodeComponent(id)}'));
+
+  Future<Map<String, dynamic>> stop(String id) async =>
+      _asMap(await _t.request('POST', 'automations/${Uri.encodeComponent(id)}/stop'));
+
+  Future<Map<String, dynamic>> duplicate(String id) async =>
+      _asMap(await _t.request('POST', 'automations/${Uri.encodeComponent(id)}/duplicate'));
+}
+
+class MailoflyEvents {
+  MailoflyEvents(this._t);
+  final MailoflyTransport _t;
+
+  Future<Map<String, dynamic>> send(Map<String, dynamic> params) async =>
+      _asMap(await _t.request('POST', 'events/send', body: params));
+
+  Future<Map<String, dynamic>> list({
+    String? name,
+    String? email,
+    int? limit,
+  }) async {
+    final q = <String, String>{};
+    if (name != null) q['name'] = name;
+    if (email != null) q['email'] = email;
+    if (limit != null) q['limit'] = '$limit';
+    return _asMap(await _t.request('GET', 'events', query: q.isEmpty ? null : q));
+  }
+
+  Future<Map<String, dynamic>> get(String id) async =>
+      _asMap(await _t.request('GET', 'events/${Uri.encodeComponent(id)}'));
+}
+

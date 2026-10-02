@@ -1,3 +1,9 @@
+## 0.3.0
+
+- Added `client.automations` resource (`list`, `get`, `create`, `update`, `delete`, `stop`, `duplicate`).
+- Added `client.automations.runs` resource (`list`, `get`).
+- Added `client.events` resource (`send`, `list`, `get`).
+
 ## 0.2.0
 
 - Added `client.identities` (`list`, `get`, `update`, `delete`) matching current REST API v1.

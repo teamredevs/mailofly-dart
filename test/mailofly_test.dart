@@ -12,4 +12,13 @@ void main() {
       throwsA(isA<ArgumentError>()),
     );
   });
+
+  test('Mailofly exposes automations and events resources', () {
+    final client = Mailofly(apiKey: 'mf_live_test');
+    expect(client.automations, isNotNull);
+    expect(client.automations.runs, isNotNull);
+    expect(client.events, isNotNull);
+    client.close();
+  });
 }
+
